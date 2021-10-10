@@ -20,7 +20,8 @@ const io = new Server(expressServer);
 
 //Process and update coordinates on the database. In this function we recieve the updated coords from frontend
 const updateCoords = async function (data) {
-   const { id, updateCoords } = data;
+   const { id, coords: updatedCoords } = data;
+   console.log(data);
    //query to database to update the coords
    await Coordinates.findOneAndUpdate(
       { _id: id },
@@ -28,7 +29,7 @@ const updateCoords = async function (data) {
          $set: {
             location: {
                type: 'Point',
-               coordinates: [...updateCoords],
+               coordinates: [...updatedCoords],
             },
          },
       }
