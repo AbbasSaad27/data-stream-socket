@@ -51,7 +51,10 @@ app.get('/', (req, res, next) => {
    res.sendFile(__dirname + '/index.html');
 });
 
+//define the port
+const PORT = process.env.PORT || 5000;
+
 //start the server
-expressServer.listen(5000, () => {
-   console.log('App is alive on localhost:5000');
+expressServer.listen(PORT, () => {
+   console.log(`App is alive on localhost:${PORT}`);
 });
