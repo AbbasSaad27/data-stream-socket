@@ -16,10 +16,26 @@
          crossorigin="anonymous"
       ></script>
       <script>
+         //initalise socket on frontend
          const socket = io('http://localhost:5000/');
-         socket.on('coordsChange', (data) => {
-            console.log(data.location.coordinates);
-         });
+
+         //by calling the getUpdatedData function you can get the recent updated data from database.
+         function getUpdatedData() {
+            socket.on('updatedCoords', (data) => {
+               return data;
+            });
+         }
+
+         //process to send the coods to server using socket
+         function sendCoords(id, coords) {
+            socket.emit('sendCoords', { id, coords });
+         }
+
+         //By passing the mongodb document id and updated coords array into this function, It will save the new coords to database realtime.
+         sendCoords('616282dc09b498127d797216', [38.899345, -77.014565]);
+
+         //call to get the recent updated data from database
+         console.log(getUpdatedData());
       </script>
    </body>
 </html>

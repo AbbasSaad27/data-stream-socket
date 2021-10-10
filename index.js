@@ -18,16 +18,40 @@ mongoose
 const { Server } = require('socket.io');
 const io = new Server(expressServer);
 
-io.on('connection', (socket) => {
+//Process and update coordinates on the database. In this function we recieve the updated coords from frontend
+const updateCoords = async function (data) {
+   const { id, updateCoords } = data;
+   //query to database to update the coords
+   await Coordinates.findOneAndUpdate(
+      { _id: id },
+      {
+         $set: {
+            location: {
+               type: 'Point',
+               coordinates: [...updateCoords],
+            },
+         },
+      }
+   );
+};
+
+//open socket connection
+io.on('connection', async (socket) => {
+   //update the coords into the database by recieving sendsCoords event from frontend
+   socket.on('sendCoords', updateCoords);
+
+   //track if there are any changes has made to databse if there is changes then return the changed data to frontend for better dev experience
    Coordinates.watch([], { fullDocument: 'updateLookup' }).on('change', (change) => {
-      socket.emit('coordsChange', change.fullDocument);
+      socket.emit('updatedCoords', change.fullDocument);
    });
 });
 
+//load the html file to browser
 app.get('/', (req, res, next) => {
    res.sendFile(__dirname + '/index.html');
 });
 
+//start the server
 expressServer.listen(5000, () => {
    console.log('App is alive on localhost:5000');
 });
