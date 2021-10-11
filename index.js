@@ -19,9 +19,8 @@ const { Server } = require('socket.io');
 const io = new Server(expressServer);
 
 //Process and update coordinates on the database. In this function we recieve the updated coords from frontend
-const updateCoords = async function (data) {
+const processUpdateCoords = async function (data) {
    const { id, coords: updatedCoords } = data;
-   console.log(data);
    //query to database to update the coords
    await Coordinates.findOneAndUpdate(
       { _id: id },
@@ -39,11 +38,11 @@ const updateCoords = async function (data) {
 //open socket connection
 io.on('connection', async (socket) => {
    //update the coords into the database by recieving sendsCoords event from frontend
-   socket.on('sendCoords', updateCoords);
+   socket.on('updateCoords', processUpdateCoords);
 
    //track if there are any changes has made to databse if there is changes then return the changed data to frontend for better dev experience
    Coordinates.watch([], { fullDocument: 'updateLookup' }).on('change', (change) => {
-      socket.emit('updatedCoords', change.fullDocument);
+      socket.emit('getUpdatedCoords', change.fullDocument);
    });
 });
 

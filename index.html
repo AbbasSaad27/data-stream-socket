@@ -20,24 +20,24 @@
          const socket = io('http://localhost:5000/');
 
          //by calling the getUpdatedData function you can get the recent updated data from database.
-         function getUpdatedData() {
+         function getUpdatedCoords() {
             return new Promise(function (resolve, reject) {
-               socket.on('updatedCoords', (data) => {
+               socket.on('getUpdatedCoords', (data) => {
                   resolve(data);
                });
             });
          }
 
          //process to send the coods to server using socket
-         function sendCoords(id, coords) {
-            socket.emit('sendCoords', { id, coords });
+         function updateCoords(id, coords) {
+            socket.emit('updateCoords', { id, coords });
          }
 
          //By passing the mongodb document id and updated coords array into this function, It will save the new coords to database realtime.
-         sendCoords('616282dc09b498127d797216', [38.899342, -77.014562]);
+         updateCoords('616282dc09b498127d797216', [38.899345, -77.014565]);
 
          //call to get the recent updated data from database. You can also use await insted of then inside any await function
-         getUpdatedData().then((val) => {
+         getUpdatedCoords().then((val) => {
             console.log(val);
          });
       </script>
